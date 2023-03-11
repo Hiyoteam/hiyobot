@@ -1,4 +1,4 @@
-import websocket,ssl,re,json,threading
+import websocket,ssl,json,threading
 from functools import wraps
 class Bot:
     def __init__(self,channel,nick,password) -> None:
@@ -64,7 +64,12 @@ class Matchers:
         return data["cmd"] == "onlineAdd"
     def startswith(text):
         def _startswith(data):
-            return data["text"].startswith(text)
+            return data.get("text","").startswith(text)
         return Matcher(_startswith)
     message=Matcher(_message)
     join=Matcher(_join)
+class Tools:
+    def in_new_thread(func):
+        return lambda:threading.Thread(target=func).start()
+    def run_in_new_thread(func):
+        return threading.Thread(target=func).start()
