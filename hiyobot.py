@@ -20,7 +20,7 @@ class Bot:
     def send(self,data:dict|str):
         if type(data) == str:
             #auto-detect&convert type
-            data=Message.Text(str)
+            data=Message.Text(data)
         self.ws.send(json.dumps(data))
     def _run(self):
         while True:
