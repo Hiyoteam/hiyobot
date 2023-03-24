@@ -16,7 +16,10 @@ class Bot:
             self.events.append(wrapper)
             return wrapper
         return decorate
-    def send(self,data:dict):
+    def send(self,data:dict|str):
+        if type(data) == str:
+            #auto-detect&convert type
+            data=Message.Text(str)
         self.ws.send(json.dumps(data))
     def _run(self):
         while True:
@@ -68,7 +71,7 @@ class Matchers:
         return Matcher(_startswith)
     message=Matcher(_message)
     join=Matcher(_join)
-class Tools:
+class Utils:
     def in_new_thread(func):
         return lambda:threading.Thread(target=func).start()
     def run_in_new_thread(func):
