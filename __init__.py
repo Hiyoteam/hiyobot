@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading
 from functools import wraps
-HIYOBOT_VERSION=(0,0,6)
+HIYOBOT_VERSION=(0,0,7)
 class Bot:
     def __init__(self,channel,nick,password=None) -> None:
         self.channel,self.nick,self.password=channel,nick,password
