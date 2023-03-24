@@ -2,10 +2,15 @@ import websocket,ssl,json,threading
 from functools import wraps
 HIYOBOT_VERSION=(0,0,5)
 class Bot:
-    def __init__(self,channel,nick,password) -> None:
-        self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
-        self.ws.send(json.dumps({"cmd":"join","channel":channel,"nick":nick,"password":password}))
+    def __init__(self,channel,nick,password=None) -> None:
+        self.channel,self.nick,self.password=channel,nick,password
         self.events=[]
+    def join(self):
+        self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
+        if self.password:
+            self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick,"password":self.password}))
+        else:
+            self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick}))
     def on(self,matcher):
         def decorate(func):
             @wraps(func)
