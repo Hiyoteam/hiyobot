@@ -1,5 +1,6 @@
 import websocket,ssl,json,threading
 from functools import wraps
+HIYOBOT_VERSION=(0,0,1)
 class Bot:
     def __init__(self,channel,nick,password) -> None:
         self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
@@ -33,14 +34,13 @@ class Bot:
         else:
             self._run()
 class Matcher:
-    def __init__(self,rule:function|list):
+    def __init__(self,rule):
         self.rules=[]
-        if rule == function:
-            self.rules.append(rule)
-        elif rule == list:
+        
+        if rule == list:
             self.rules=list
         else:
-            raise NotImplementedError(f"Cannot process arg for Matcher: {rule} (should be list for function)")
+            self.rules.append(rule)
     def add_rule(self,rule):
         self.rules.append(rule)
     def match(self,data):
