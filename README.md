@@ -1,7 +1,7 @@
 # Hiyobot
 A simple bot framework for Hack.chat.
 
-<center><img src="https://img.shields.io/badge/Powered%20By-Python-blue.svg"></img> <img src="https://img.shields.io/badge/Powered%20By-websocket_client-blue.svg"></img> <img src="https://img.shields.io/badge/Document%20version-0.0.1-green.svg"></img></center>
+<center><img src="https://img.shields.io/badge/Powered%20By-Python-blue.svg"></img> <img src="https://img.shields.io/badge/Powered%20By-websocket_client-blue.svg"></img> <img src="https://img.shields.io/badge/Document%20version-0.0.2-green.svg"></img></center>
 
 # How to use
 Execute `pip3 install hiyobot` on your console. in some case, it will be `pip`.The output should looks like:
