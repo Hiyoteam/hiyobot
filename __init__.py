@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading
 from functools import wraps
-HIYOBOT_VERSION=(0,0,4)
+HIYOBOT_VERSION=(0,0,5)
 class Bot:
     def __init__(self,channel,nick,password) -> None:
         self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
