@@ -33,10 +33,14 @@ class Bot:
         else:
             self._run()
 class Matcher:
-    def __init__(self,rule=None):
+    def __init__(self,rule:function|list):
         self.rules=[]
-        if rule:
+        if rule == function:
             self.rules.append(rule)
+        elif rule == list:
+            self.rules=list
+        else:
+            raise NotImplementedError(f"Cannot process arg for Matcher: {rule} (should be list for function)")
     def add_rule(self,rule):
         self.rules.append(rule)
     def match(self,data):
@@ -61,16 +65,14 @@ class Message:
     def Image(URL):
         return {"cmd":"chat","text":f"![]({URL})"}
 class Matchers:
-    def _message(data):
+    def message(data):
         return data["cmd"] == "chat"
-    def _join(data):
+    def join(data):
         return data["cmd"] == "onlineAdd"
     def startswith(text):
         def _startswith(data):
             return data.get("text","").startswith(text)
-        return Matcher(_startswith)
-    message=Matcher(_message)
-    join=Matcher(_join)
+        return _startswith
 class Utils:
     def in_new_thread(func):
         return lambda:threading.Thread(target=func).start()
