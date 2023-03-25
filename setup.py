@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hiyobot', # 你的项目名称
-    version='0.0.7', # 你的项目版本
+    version='0.0.8', # 你的项目版本
     description='A simple bot framework for Hack.chat.', # 你的项目简介
     long_description=open('README.md').read(), # 你的项目详细介绍，一般从README.md文件中读取
     long_description_content_type='text/markdown', # 你的项目详细介绍的格式，一般为markdown格式
@@ -21,5 +21,6 @@ setup(
     packages=find_packages(), # 需要打包的python模块，一般使用find_packages函数自动查找，排除测试模块等不需要打包的模块
     install_requires=[ # 需要安装的依赖包，一般从requirements.txt文件中读取或者手动列出
         'websocket-client',
+        'uuid',
     ],
 )
