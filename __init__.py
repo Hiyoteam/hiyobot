@@ -1,4 +1,4 @@
-import websocket,ssl,json,threading,uuid,time,logging
+import websocket,ssl,json,threading,uuid,time,logging,re
 from functools import wraps
 HIYOBOT_VERSION=(0,0,9)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
@@ -115,6 +115,10 @@ class Matchers:
         def _startswith(data):
             return data.get("text","").startswith(text)
         return _startswith
+    def regex(text):
+        def _regex(data):
+            return len(re.match(text,data.get("text","")))>0
+        return _regex
 class Utils:
     def in_new_thread(func):
         return lambda:threading.Thread(target=func).start()
