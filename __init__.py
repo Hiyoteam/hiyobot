@@ -174,11 +174,6 @@ class Session:
         self.extra_datas["waitforinput"]=False
         raise TimeoutError("Session expired.")
 
-                
-
-
-
-
 class Plugin:
     def __init__(self):
         self.commands=[]
@@ -198,3 +193,5 @@ class Plugin:
     def build_exports(self):
         logging.debug(f"Built exports for plugin {self}")
         return self.commands
+if __name__ == "__main__":
+    raise Exception("Cannot run module as script!")
