@@ -1,11 +1,13 @@
-import websocket,ssl,json,threading,uuid,time,logging,re
+import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,0,9)
+HIYOBOT_VERSION=(0,1,0)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     def __init__(self,channel,nick,password=None) -> None:
         self.channel,self.nick,self.password=channel,nick,password
         self.events=[]
+        self.checks=[]
+        self.config={}
         self.join()
     def join(self):
         self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
@@ -50,30 +52,44 @@ class Bot:
                 logging.debug(f"Sent: {dumped}")
         else:
             logging.debug(f"Sent: {dumped}")
-    def _run(self):
+    def _run(self,async_run=False):
         while True:
             data = json.loads(self.ws.recv())
-            dumped=json.dumps(data)
-            if MAX_RECV_LOG_LIMIT != 0:
-                if len(dumped) >= MAX_RECV_LOG_LIMIT:
-                    logging.debug(f"Recv: {dumped[:MAX_RECV_LOG_LIMIT]}...")
+            def process(data):
+                dumped=json.dumps(data)
+                if MAX_RECV_LOG_LIMIT != 0:
+                    if len(dumped) >= MAX_RECV_LOG_LIMIT:
+                        logging.debug(f"Recv: {dumped[:MAX_RECV_LOG_LIMIT]}...")
+                    else:
+                        logging.debug(f"Recv: {dumped}")
                 else:
                     logging.debug(f"Recv: {dumped}")
+                session=Session(self,data)
+                logging.debug(f"Matching Checks....")
+                for check in self.checks:
+                    if check[0].match_all(data):
+                        logging.debug(f"Matched!")
+                        check[1](check[2],session)
+                        self.checks.remove(check)
+                    logging.debug(f"Skipping event matching because check has matched.")
+                    continue
+                logging.debug(f"Matching Event in {len(self.events)} Events...")
+                for event in self.events:
+                    try:
+                        event(data=Data(data),session=session)
+                    except Exception as e:
+                        logging.warn(f"Error when processing Event {event}")
+                        traceback.print_exc()
+            if async_run:
+                threading.Thread(target=process,args=(data,)).start()
             else:
-                logging.debug(f"Recv: {dumped}")
-            session=Session(self)
-            logging.debug(f"Matching Event in {len(self.events)} Events...")
-            for event in self.events:
-                try:
-                    event(data=Data(data),session=session)
-                except:
-                    logging.warn(f"Error when processing Event {event}")
-    def run(self,in_new_thread=False):
+                process(data)
+    def run(self,async_mission=True,in_new_thread=False):
         if in_new_thread:
-            self.thread=threading.Thread(target=self._run)
+            self.thread=threading.Thread(target=self._run,args=(async_mission,))
             self.thread.start()
         else:
-            self._run()
+            self._run(async_mission)
 class Matcher:
     def __init__(self,rule):
         self.rules=[]
@@ -117,19 +133,51 @@ class Matchers:
         return _startswith
     def regex(text):
         def _regex(data):
-            return len(re.match(text,data.get("text","")))>0
+            return bool(re.match(text,data.get("text","")))
         return _regex
+    def nick(text):
+        def _nick(data):
+            return data.get("nick") == text
+        return _nick
 class Utils:
     def in_new_thread(func):
         return lambda:threading.Thread(target=func).start()
     def run_in_new_thread(func):
         return threading.Thread(target=func).start()
 class Session:
-    def __init__(self,bot):
+    def __init__(self,bot,data):
         logging.debug(f"Built session(bot={bot})")
         self.bot=bot
+        self.data=data
+        self.extra_datas={}
         self.created_on=time.time()
         self.sessionID=str(uuid.uuid4())
+    def wait_for_input(self,prompt=None,expires=60,delay=100):
+        self.extra_datas["waitforinput"]=False
+        if prompt:
+            self.bot.send(prompt)
+        #bind checker
+        nick=self.data["nick"]
+        checker=Matcher(Matchers.nick(nick))
+        def check(session,newsession):
+            #checked:
+            logging.debug(f"Callback running: {session} and new one {newsession}")
+            session.extra_datas["waitforinput"]=newsession.data.get("text")
+        self.bot.checks.append((checker,check,self))
+        stt=time.time()
+        while (time.time()-stt)<expires:
+            time.sleep(delay/1000)
+            if self.extra_datas["waitforinput"]:
+                logging.debug("Got message!")
+                return self.extra_datas["waitforinput"]
+        logging.debug("Session expired.")
+        self.extra_datas["waitforinput"]=False
+        raise TimeoutError("Session expired.")
+
+                
+
+
+
 
 class Plugin:
     def __init__(self):
