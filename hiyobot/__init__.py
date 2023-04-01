@@ -195,3 +195,5 @@ class Plugin:
         return self.commands
 if __name__ == "__main__":
     raise Exception("Cannot run module as script!")
+
+
