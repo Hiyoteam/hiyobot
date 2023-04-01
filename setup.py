@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hiyobot', # 你的项目名称
-    version='0.1.1', # 你的项目版本
+    version='0.1.2', # 你的项目版本
     description='A simple bot framework for Hack.chat.', # 你的项目简介
     long_description=open('README.md').read(), # 你的项目详细介绍，一般从README.md文件中读取
     long_description_content_type='text/markdown', # 你的项目详细介绍的格式，一般为markdown格式
