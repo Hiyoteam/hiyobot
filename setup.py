@@ -19,5 +19,11 @@ setup(
     ],
     keywords='bot hack.chat hack.chat-bot', # 一些关键词，用于描述你的项目特点或者功能
     packages=find_packages(include="*"), # 需要打包的python模块，一般使用find_packages函数自动查找，排除测试模块等不需要打包的模块
-    install_requires=open("requirements.txt").readlines(),
+    install_requires="""cffi==1.15.1
+gevent==22.10.2
+greenlet==2.0.2
+pycparser==2.21
+websocket==0.2.1
+zope.event==4.6
+zope.interface==6.0""".splitlines(),
 )
