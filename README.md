@@ -34,6 +34,20 @@ def hello(session,data):
 bot.run()
 ```
 最后使用bot.run进入事件监听循环。  
+在运行这个实例后，你会发现:`哦，干，这怎么是个死循环`
+是因为我们没有对机器人自身的消息做出判断。
+```python
+from hiyobot import Bot,Matcher,Matchers
+bot=Bot("your-channel","Hiyobot_Demo")
+@bot.on(Matcher(Matchers.startswith("你好")))
+def hello(session,data):
+  if data.nick == session.bot.nick:
+    return
+  session.bot.send("你好啊！")
+
+bot.run()
+```
+大功告成！
   
   
 文档还在完善，所以**我知道你很急，但是你先别急**
