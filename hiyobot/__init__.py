@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,1,3)
+HIYOBOT_VERSION=(0,1,4)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     def __init__(self,channel,nick,password=None) -> None:
@@ -27,6 +27,10 @@ class Bot:
             self.events.append(wrapper)
             return wrapper
         return decorate
+    def _pingThread(self):
+        while 1:
+            self.ws.send('{"cmd":"ping"}')
+            time.sleep(60)
     def _bindRaw(self,function):
         self.events.append(function)
         logging.debug(f"Restigered Event-Function {function} for bot {self}")
@@ -84,12 +88,15 @@ class Bot:
                 threading.Thread(target=process,args=(data,)).start()
             else:
                 process(data)
-    def run(self,async_mission=True,in_new_thread=False):
+    def run(self,async_mission=True,in_new_thread=False,ping_thread=True):
         if in_new_thread:
             self.thread=threading.Thread(target=self._run,args=(async_mission,))
             self.thread.start()
         else:
             self._run(async_mission)
+        if ping_thread:
+            self.ping_thread=threading.Thread(target=self._pingThread)
+            self.ping_thread.start()
 class Matcher:
     def __init__(self,rule):
         self.rules=[]
