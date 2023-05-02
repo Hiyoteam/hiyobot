@@ -43,7 +43,7 @@ class Bot:
         for command in plugin.exports:
             self._bindRaw(command)
         logging.debug(f"Included plugin {plugin_name}")
-    def send(self,data:dict|str):
+    def send(self,data):
         if type(data) == str:
             #auto-detect&convert type
             data=Message.Text(data)
