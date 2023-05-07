@@ -3,19 +3,31 @@ from functools import wraps
 HIYOBOT_VERSION=(0,1,4)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
+    """
+    Simple Hack.chat bot class.
+    """
     def __init__(self,channel,nick,password=None) -> None:
+        """
+        Init the Bot.
+        """
         self.channel,self.nick,self.password=channel,nick,password
         self.events=[]
         self.checks=[]
         self.config={}
         self.join()
     def join(self):
+        """
+        Send the request that joining into the channel.
+        """
         self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
         if self.password:
             self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick,"password":self.password}))
         else:
             self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick}))
     def on(self,matcher):
+        """
+        Add a new event.
+        """
         def decorate(func):
             @wraps(func)
             def wrapper(session, data,*args, **kwargs):
@@ -35,6 +47,9 @@ class Bot:
         self.events.append(function)
         logging.debug(f"Restigered Event-Function {function} for bot {self}")
     def load_plugin(self,plugin_name):
+        """
+        Load a Hiyobot Plugin.
+        """
         #process the plugin name
         logging.debug("Ready for include module")
         plugin_name=plugin_name.replace("-","_")
@@ -44,6 +59,9 @@ class Bot:
             self._bindRaw(command)
         logging.debug(f"Included plugin {plugin_name}")
     def send(self,data):
+        """
+        Send JSON pack/text.
+        """
         if type(data) == str:
             #auto-detect&convert type
             data=Message.Text(data)
@@ -89,6 +107,9 @@ class Bot:
             else:
                 process(data)
     def run(self,async_mission=True,in_new_thread=False,ping_thread=True):
+        """
+        Enter the bot mainloop.
+        """
         if in_new_thread:
             self.thread=threading.Thread(target=self._run,args=(async_mission,))
             self.thread.start()
@@ -98,6 +119,9 @@ class Bot:
             self.ping_thread=threading.Thread(target=self._pingThread)
             self.ping_thread.start()
 class Matcher:
+    """
+    A class, to check "should this event run"
+    """
     def __init__(self,rule):
         self.rules=[]
         
@@ -106,14 +130,23 @@ class Matcher:
         else:
             self.rules.append(rule)
     def add_rule(self,rule):
+        """
+        Add a Checking function.
+        """
         self.rules.append(rule)
     def match(self,data):
+        """
+        Match. if one is successed, then True
+        """
         matched=False
         for rule in self.rules:
             matched_=rule(data)
             if matched_:
                 matched=True
     def match_all(self,data):
+        """
+        Match. only return true when all function returns true
+        """
         if type(data) == Data:
             data=data.__dict__
         for rule in self.rules:
@@ -122,14 +155,23 @@ class Matcher:
                 return False
         return matched
 class Data:
+    """
+    Base Data Class
+    """
     def __init__(self,jsondata):
         self.__dict__=jsondata
 class Message:
+    """
+    Function-to-JSON class
+    """
     def Text(string):
         return {"cmd":"chat","text":string}
     def Image(URL):
         return {"cmd":"chat","text":f"![]({URL})"}
 class Matchers:
+    """
+    Preset Matchers.
+    """
     def message(data):
         return data["cmd"] == "chat"
     def join(data):
@@ -147,6 +189,9 @@ class Matchers:
             return data.get("nick") == text
         return _nick
 class Utils:
+    """
+    Some tools.
+    """
     def in_new_thread(func):
         return lambda:threading.Thread(target=func).start()
     def run_in_new_thread(func):
