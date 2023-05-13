@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,1,7)
+HIYOBOT_VERSION=(0,1,8)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     """
@@ -66,8 +66,8 @@ class Bot:
         if type(data) == str:
             #auto-detect&convert type
             data=Message.Text(data)
-        self.ws.send(json.dumps(data))
-        dumped=json.dumps(data)
+        self.ws.send(json.dumps(data,ensure_ascii=False))
+        dumped=json.dumps(data,ensure_ascii=False)
         if MAX_RECV_LOG_LIMIT != 0:
             if len(dumped) >= MAX_RECV_LOG_LIMIT:
                 logging.debug(f"Sent: {dumped[:MAX_RECV_LOG_LIMIT]}...")
