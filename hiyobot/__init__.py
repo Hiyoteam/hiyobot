@@ -6,7 +6,7 @@ class Bot:
     """
     Simple Hack.chat bot class.
     """
-    def __init__(self,channel,nick,password=None) -> None:
+    def __init__(self,channel,nick,password=None,joinoncreate=True) -> None:
         """
         Init the Bot.
         """
@@ -14,7 +14,8 @@ class Bot:
         self.events=[]
         self.checks=[]
         self.config={}
-        self.join()
+        if joinoncreate:
+            self.join()
     def join(self):
         """
         Send the request that joining into the channel.
@@ -76,7 +77,12 @@ class Bot:
             logging.debug(f"Sent: {dumped}")
     def _run(self,async_run=False):
         while True:
-            data = json.loads(self.ws.recv())
+            try:
+                data = json.loads(self.ws.recv())
+            except:
+                logging.warning("Recv Data Failed, call re-join")
+                self.join()
+                continue
             def process(data):
                 dumped=json.dumps(data)
                 if MAX_RECV_LOG_LIMIT != 0:
@@ -172,22 +178,12 @@ class Matchers:
     """
     Preset Matchers.
     """
-    def message(data):
-        return data["cmd"] == "chat"
-    def join(data):
-        return data["cmd"] == "onlineAdd"
-    def startswith(text):
-        def _startswith(data):
-            return data.get("text","").startswith(text)
-        return _startswith
-    def regex(text):
-        def _regex(data):
-            return bool(re.match(text,data.get("text","")))
-        return _regex
-    def nick(text):
-        def _nick(data):
-            return data.get("nick") == text
-        return _nick
+    message=lambda x:x["cmd"] == "chat"
+    join=lambda x:x["cmd"] == "onlineAdd"
+    startswith=lambda x:lambda y:y.get("text","").startswith(x)
+    regex=lambda x:lambda y:bool(re.match(x,y.get("text","")))
+    nick=lambda x:lambda y:y.get("nick")==x
+    nicknameTaken=lambda x:x["cmd"] == "warn" and x["text"] == "Nickname Taken"
 class Utils:
     """
     Some tools.
