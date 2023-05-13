@@ -79,6 +79,7 @@ class Bot:
         while True:
             try:
                 data = json.loads(self.ws.recv())
+                
             except:
                 logging.warning("Recv Data Failed, call re-join")
                 self.join()
