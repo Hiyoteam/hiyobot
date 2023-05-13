@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,2,1)
+HIYOBOT_VERSION=(0,2,2)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     """
@@ -32,9 +32,9 @@ class Bot:
         def decorate(func):
             @wraps(func)
             def wrapper(session, data,*args, **kwargs):
-                if matcher.match_all(data):
+                if matcher.match_all(data.__dict__):
                     logging.debug(f"Matched! Function={func} Matcher={matcher}")
-                    return func(session=session, data=data.__dict__, *args, **kwargs)
+                    return func(session=session, data=data, *args, **kwargs)
                 else:
                     return None
             self.events.append(wrapper)
