@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,1,6)
+HIYOBOT_VERSION=(0,1,7)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     """
@@ -20,11 +20,11 @@ class Bot:
         """
         Send the request that joining into the channel.
         """
-        self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
+        self.ws = websocket.create_connection("wss://chat.zhangsoft.eu.org/ws",sslopt={"cert_reqs":ssl.CERT_NONE})
         if self.password:
-            self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick,"password":self.password}))
+            self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick,"password":self.password,"bot":True,"client":"hiyooooooo"},ensure_ascii=False))
         else:
-            self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick}))
+            self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick,"bot":True,"client":"hiyooooooo"},ensure_ascii=False))
     def on(self,matcher):
         """
         Add a new event.

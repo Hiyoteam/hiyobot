@@ -17,41 +17,11 @@ Installing collected packages: hiyobot
 Successfully installed hiyobot-<version>
 ```
 # 开发文档
-## 你的第一个机器人！
-hiyobot提供Bot()类来实现机器人，分别接受3个参数（2必须,1可选）
-```python
-from hiyobot import Bot
-bot=Bot("your-channel","Hiyobot_Demo")
-```
-这些代码创建一个叫做Hiyobot_Demo的机器人，将其作为名称，加入your-channel频道。
-如果代码正常运行，你应该能看见在频道里加入了一个这样的机器人。
-## 第一个事件！
-hiyobot根据事件绑定器来判断“这个事件该不该执行”。例如`Matcher(Matchers.startswith("你好"))`就是一个匹配器，根据hiyobot内嵌的匹配器模板来匹配一切由`你好`开头的消息。
-hiyobot给事件传入两个参数：session(当前会话),data(事件触发数据)。
-下面我们进一步完善机器人，加上功能：收到以`你好`开头的消息时回复`你好啊！`
-```python
-from hiyobot import Bot,Matcher,Matchers
-bot=Bot("your-channel","Hiyobot_Demo")
-@bot.on(Matcher(Matchers.startswith("你好")))
-def hello(session,data):
-  session.bot.send("你好啊！")
-bot.run()
-```
-最后使用bot.run进入事件监听循环。  
-在运行这个实例后，你会发现:`哦，干，这怎么是个死循环`
-是因为我们没有对机器人自身的消息做出判断。
-```python
-from hiyobot import Bot,Matcher,Matchers
-bot=Bot("your-channel","Hiyobot_Demo")
-@bot.on(Matcher(Matchers.startswith("你好")))
-def hello(session,data):
-  if data.nick == session.bot.nick:
-    return
-  session.bot.send("你好啊！")
+暂无
 
-bot.run()
-```
-大功告成！
-  
-  
-文档还在完善，所以**我知道你很急，但是你先别急**
+# 注释
+ - HiyoBot PYPI版本取决于Hack.chat子集版本。
+ - HiyoBot子集使用： 如在Hack.chat编写机器人:`from hiyobot import hackchat as hcbot`, 在ZhangChat(chat.zhangsoft.eu.org or chat.zhangsoft.cf)编写机器人:`from hiyobot import zhangchat as zhcbot`
+ - 目前支持的聊天室： Hack.chat(hackchat),ZhangChat(zhangchat)
+ - 如其他子集使用方式与Hack.chat集不同，即开设子文档。（暂无）
+ - 我们会始终欢迎您的PR/Issues！
