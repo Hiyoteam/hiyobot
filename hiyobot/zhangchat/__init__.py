@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,1,8)
+HIYOBOT_VERSION=(0,1,9)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     """
@@ -172,7 +172,7 @@ class Message:
     Function-to-JSON class
     """
     def Text(string):
-        return {"cmd":"chat","text":string}
+        return {"cmd":"chat","text":string,"head":""}
     def Image(URL):
         return {"cmd":"chat","text":f"![]({URL})"}
 class Matchers:
