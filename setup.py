@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from hiyobot import HIYOBOT_VERSION
+
 setup(
     name='hiyobot', # 你的项目名称
     version="0.1.6", # 你的项目版本
