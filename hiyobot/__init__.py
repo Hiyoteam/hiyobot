@@ -1,2 +1,2 @@
-import hackchat
-import zhangchat
+from hiyobot import hackchat
+from hiyobot import zhangchat

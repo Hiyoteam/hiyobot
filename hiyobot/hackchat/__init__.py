@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback
 from functools import wraps
-HIYOBOT_VERSION=(0,1,9)
+HIYOBOT_VERSION=(0,2,0)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 class Bot:
     """
