@@ -1,11 +1,8 @@
 # Hiyobot
 一个简单hack.chat机器人框架。    
 If your native language is not Chinese, please jump [here](https://deepl.com/) .     
-<img src="https://img.shields.io/badge/Powered%20By-Python-blue.svg"></img>     
-<img src="https://img.shields.io/badge/Powered%20By-websocket_client-blue.svg"></img>    
-<img src="https://img.shields.io/badge/Document%20version-0.0.2-green.svg"></img>
-<img src="https://img.shields.io/pypi/v/hiyobot"></img>     
-<img src="https://github.com/Hiyoteam/hiyobot/actions/workflows/python-publish.yml/badge.svg"></img>          
+<img src="https://img.shields.io/badge/Powered%20By-Python-blue.svg"></img> <img src="https://img.shields.io/badge/Powered%20By-websocket_client-blue.svg"></img> <img src="https://img.shields.io/badge/Document%20version-0.0.2-green.svg"></img> <img src="https://img.shields.io/pypi/v/hiyobot"></img> <img src="https://github.com/Hiyoteam/hiyobot/actions/workflows/python-publish.yml/badge.svg"></img> <img src="https://static.pepy.tech/personalized-badge/hiyobot?period=total&units=international_system&left_color=blue&right_color=lightgrey&left_text=pypi%20downloads"></img>  
+
 
 # 如何安装？
 在你的控制台里面输入`pip3 install hiyobot --upgrade`，如果你使用镜像源，可能无法获取到最新的构建，需要加上`-i https://pypi.org/simple`的参数。输出应该是这样的：
