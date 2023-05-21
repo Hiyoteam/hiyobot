@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback,inspect,asyncio
 from functools import wraps
-HIYOBOT_VERSION=(0,2,3)
+HIYOBOT_VERSION=(0,2,4)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 def _isasync(func):
     if inspect.isasyncgenfunction(func) or inspect.iscoroutinefunction(func):
@@ -11,7 +11,7 @@ class Bot:
     """
     Simple Hack.chat bot class.
     """
-    def __init__(self,channel,nick,password=None,joinoncreate=True) -> None:
+    def __init__(self,channel,nick,password=None,joinoncreate=True,proxy=None,wsopts={}) -> None:
         """
         Init the Bot.
         """
@@ -19,13 +19,19 @@ class Bot:
         self.events=[]
         self.checks=[]
         self.config={}
+        self.proxy=proxy
+        self.wsopts=wsopts
         if joinoncreate:
             self.join()
     def join(self):
         """
         Send the request that joining into the channel.
         """
-        self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE})
+        if not self.proxy:
+            self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE},**self.wsopts)
+        else:
+            p=self.proxy.export()
+            self.ws = websocket.create_connection("wss://hack.chat/chat-ws",sslopt={"cert_reqs":ssl.CERT_NONE},proxy_type=p[0],http_proxy_host=p[1],http_proxy_port=p[2],**self.wsopts)
         if self.password:
             self.ws.send(json.dumps({"cmd":"join","channel":self.channel,"nick":self.nick,"password":self.password}))
         else:
@@ -201,6 +207,29 @@ class Utils:
         return lambda:threading.Thread(target=func).start()
     def run_in_new_thread(func):
         return threading.Thread(target=func).start()
+    
+class Proxy:
+    """
+    Proxy Class.
+    """
+    def __init__(self,url=None,protocol=None,host=None,port=None):
+        self.url=url
+        self.host=host
+        self.port=port
+        self.protocol=protocol
+        if url:
+            self._explainURL()
+    def _explainURL(self):
+        url=self.url
+        proto=url.split("://")[0]
+        hp=url.split("://")[1].split(":")
+        host=hp[0]
+        port=int(hp[1])
+        self.host=host
+        self.port=port
+        self.protocol=proto
+    def export(self):
+        return [self.protocol,self.host,self.port]
 class Session:
     def __init__(self,bot,data):
         logging.debug(f"Built session(bot={bot})")
