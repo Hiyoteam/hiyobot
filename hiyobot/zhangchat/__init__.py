@@ -1,7 +1,12 @@
-import websocket,ssl,json,threading,uuid,time,logging,re,traceback
+import websocket,ssl,json,threading,uuid,time,logging,re,traceback,inspect,asyncio
 from functools import wraps
-HIYOBOT_VERSION=(0,2,2)
+HIYOBOT_VERSION=(0,2,3)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
+def _isasync(func):
+    if inspect.isasyncgenfunction(func) or inspect.iscoroutinefunction(func):
+        return True
+    else:
+        return False
 class Bot:
     """
     Simple Hack.chat bot class.
@@ -32,9 +37,12 @@ class Bot:
         def decorate(func):
             @wraps(func)
             def wrapper(session, data,*args, **kwargs):
-                if matcher.match_all(data.__dict__):
+                if matcher.match_all(data):
                     logging.debug(f"Matched! Function={func} Matcher={matcher}")
-                    return func(session=session, data=data, *args, **kwargs)
+                    if _isasync(func):
+                        return asyncio.run(func(session=session,data=data,*args,**kwargs))
+                    else:
+                        return func(session=session, data=data, *args, **kwargs)
                 else:
                     return None
             self.events.append(wrapper)
