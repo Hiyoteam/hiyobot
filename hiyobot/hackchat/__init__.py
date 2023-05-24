@@ -1,6 +1,6 @@
 import websocket,ssl,json,threading,uuid,time,logging,re,traceback,inspect,asyncio,queue
 from functools import wraps
-HIYOBOT_VERSION=(0,2,4)
+HIYOBOT_VERSION=(0,2,5)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
 def _isasync(func):
     if inspect.isasyncgenfunction(func) or inspect.iscoroutinefunction(func):
