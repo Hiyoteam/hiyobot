@@ -4,4 +4,3 @@ pyvenv.cfg
 Include/
 Lib/
 Scripts/
-*.test.py

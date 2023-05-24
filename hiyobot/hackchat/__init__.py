@@ -237,7 +237,7 @@ class Session:
         self.data=data
         self.created_on=time.time()
         self.sessionID=str(uuid.uuid4())
-    def wait_for_input(self,prompt=None,expires=60,delay=100):
+    def wait_for_input(self,prompt=None,expires=60,checkrule=["chat","whisper"]):
         """
         Wait for user input, timeout in 60s.
         """
@@ -256,10 +256,10 @@ class Session:
                 return
             
             #extract
-            if data.cmd == "chat":
+            if data.cmd == "chat" and "chat" in checkrule:
                 #public msg
                 content=data.text
-            elif data.cmd == "info":
+            elif data.cmd == "info" and "whisper" in checkrule:
                 #private msg
                 content=data.text.split(" whispered: ",1)[1]
             else:
