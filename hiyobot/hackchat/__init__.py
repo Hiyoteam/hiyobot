@@ -1,4 +1,4 @@
-import websocket,ssl,json,threading,uuid,time,logging,re,traceback,inspect,asyncio
+import websocket,ssl,json,threading,uuid,time,logging,re,traceback,inspect,asyncio,queue
 from functools import wraps
 HIYOBOT_VERSION=(0,2,4)
 MAX_RECV_LOG_LIMIT=100 #0 for no limit
@@ -112,7 +112,7 @@ class Bot:
                 for check in self.checks:
                     if check[0].match_all(data):
                         logging.debug(f"Matched!")
-                        check[1](check[2],session)
+                        check[1](Data(data),check[2],session)
                         self.checks.remove(check)
                     logging.debug(f"Skipping event matching because check has matched.")
                     continue
@@ -235,30 +235,48 @@ class Session:
         logging.debug(f"Built session(bot={bot})")
         self.bot=bot
         self.data=data
-        self.extra_datas={}
         self.created_on=time.time()
         self.sessionID=str(uuid.uuid4())
     def wait_for_input(self,prompt=None,expires=60,delay=100):
-        self.extra_datas["waitforinput"]=False
+        """
+        Wait for user input, timeout in 60s.
+        """
         if prompt:
             self.bot.send(prompt)
         #bind checker
         nick=self.data["nick"]
-        checker=Matcher(Matchers.nick(nick))
-        def check(session,newsession):
+        checker=Matcher(lambda x:(x.get("cmd") == "chat" and x.get("nick") == nick) or (x.get("cmd") == "info" and x.get("type") == "whisper" and x.get("from") == nick) or (x.get("cmd") == "onlineRemove" and x.get("nick") == nick))
+        callbackq=queue.Queue()
+        def check(data,session,newsession):
             #checked:
             logging.debug(f"Callback running: {session} and new one {newsession}")
-            session.extra_datas["waitforinput"]=newsession.data.get("text")
+            if data.cmd == "onlineRemove":
+                logging.debug("Target left, kill session.")
+                callbackq.put([1]) #1=expire
+                return
+            
+            #extract
+            if data.cmd == "chat":
+                #public msg
+                content=data.text
+            elif data.cmd == "info":
+                #private msg
+                content=data.text.split(" whispered: ",1)[1]
+            else:
+                #what the hell was that
+                raise NotImplementedError("Unknown message type")
+            callbackq.put([0,content,data])
         self.bot.checks.append((checker,check,self))
-        stt=time.time()
-        while (time.time()-stt)<expires:
-            time.sleep(delay/1000)
-            if self.extra_datas["waitforinput"]:
-                logging.debug("Got message!")
-                return self.extra_datas["waitforinput"]
-        logging.debug("Session expired.")
-        self.extra_datas["waitforinput"]=False
-        raise TimeoutError("Session expired.")
+        try:
+            data=callbackq.get(timeout=expires)
+            if data[0] == 0:
+                return data[1],data[2]
+            if data[0] == 1:
+                #what the hell was thatagain?
+                raise NotImplementedError("Unknown callback status")
+        except:
+            logging.debug("Session expired.")
+            raise TimeoutError("Session expired.")
 
 class Plugin:
     def __init__(self):

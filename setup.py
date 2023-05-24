@@ -18,7 +18,7 @@ setup(
         'Programming Language :: Python :: 3.10', # 编程语言的具体版本，根据你的项目支持的python版本选择
     ],
     keywords='bot hack.chat hack.chat-bot', # 一些关键词，用于描述你的项目特点或者功能
-    packages=find_packages(include="*"), # 需要打包的python模块，一般使用find_packages函数自动查找，排除测试模块等不需要打包的模块
+    packages=find_packages(include="*",exclude=["*.test.py"]), # 需要打包的python模块，一般使用find_packages函数自动查找，排除测试模块等不需要打包的模块
     install_requires="""cffi==1.15.1
 gevent==22.10.2
 greenlet==2.0.2
