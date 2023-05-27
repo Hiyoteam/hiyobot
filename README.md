@@ -1,7 +1,7 @@
 # Hiyobot
 一个简单hack.chat机器人框架。    
 If your native language is not Chinese, please jump [here](https://deepl.com/) .     
-<img src="https://img.shields.io/badge/Powered%20By-Python-blue.svg"></img> <img src="https://img.shields.io/badge/Powered%20By-websocket_client-blue.svg"></img> <img src="https://img.shields.io/badge/Document%20version-0.0.2-green.svg"></img> <img src="https://img.shields.io/pypi/v/hiyobot"></img> <img src="https://github.com/Hiyoteam/hiyobot/actions/workflows/python-publish.yml/badge.svg"></img> <img src="https://static.pepy.tech/personalized-badge/hiyobot?period=total&units=international_system&left_color=grey&right_color=blue&left_text=pypi%20downloads"></img>  
+<img src="https://img.shields.io/badge/Powered%20By-Python-blue.svg"></img> <img src="https://img.shields.io/badge/Powered%20By-websocket_client-blue.svg"></img> <img src="https://img.shields.io/badge/Document%20version-0.0.3-green.svg"></img> <img src="https://img.shields.io/pypi/v/hiyobot"></img> <img src="https://github.com/Hiyoteam/hiyobot/actions/workflows/python-publish.yml/badge.svg"></img> <img src="https://static.pepy.tech/personalized-badge/hiyobot?period=total&units=international_system&left_color=grey&right_color=blue&left_text=pypi%20downloads"></img>  
 
 
 # 如何安装？
@@ -14,7 +14,7 @@ Installing collected packages: hiyobot
 Successfully installed hiyobot-<version>
 ```
 # 开发文档
-暂无
+ - [HackChat](HC_DOC.md)
 
 # 注释
  - HiyoBot PYPI版本取决于Hack.chat子集版本。
