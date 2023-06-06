@@ -23,7 +23,7 @@ setup(
 gevent==22.10.2
 greenlet==2.0.2
 pycparser==2.21
-websocket-client==1.3.2
+websocket-client
 zope.event==4.6
 zope.interface==6.0""".splitlines(),
 )
