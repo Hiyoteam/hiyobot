@@ -1,3 +1,4 @@
+# This project is going to be archived, go to Hiyoteam/hvicorn
 # Hiyobot
 一个简单hack.chat机器人框架。    
 If your native language is not Chinese, please jump [here](https://deepl.com/) .     
